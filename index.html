@@ -8,11 +8,13 @@
 <!--
   [폴더 구조]
   index.html
-  images/1.png ~ 15.png   (사진 번호와 동일하게 저장. png/jpg/jpeg/webp 모두 자동 인식)
+  images/1.png ~ 22.png   (사진 번호와 동일하게 저장. png/jpg/jpeg/webp 모두 자동 인식)
 
   1 카카오톡 아이콘 / 2,3 카카오톡 예시(참고용, 사이트에서는 직접 사용하지 않음)
   4 네이버 블로그 아이콘 / 5,6 블로그 글 / 7 구글 아이콘 / 8 삼각김밥 썸네일
   9 구글 홈 / 10 건강뉴스 기사 / 11 검색결과 / 12 AI 개요 / 13,14,15 국민건강지식센터
+  16,17 '전자레인지 진짜 위험한가요?' 검색 결과
+  [힌트 사진] 18,19 = 블로그 글(5,6)의 힌트 / 20 = 건강뉴스(10)의 힌트 / 21,22 = 16,17의 힌트
 -->
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -90,6 +92,10 @@ body.locked #homebar{pointer-events:none}
 /* ===== 이미지(스크린샷) 페이지 ===== */
 .shotpage .scroll{position:absolute;left:0;right:0;top:var(--sb);bottom:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .shotpage .scroll::-webkit-scrollbar{display:none}
+/* 힌트 사진 묶음: 평소에는 숨겨 두고, 힌트를 누르면 원래 사진 대신 보여준다 */
+.shotpage .scroll.alt{display:none}
+.shotpage.hinton .scroll{display:none}
+.shotpage.hinton .scroll.alt{display:block}
 .crop{position:relative;overflow:hidden;width:100%}
 .crop .inner{position:relative;width:100%}
 .crop img{display:block;width:100%;height:100%;-webkit-user-drag:none;pointer-events:none}
@@ -97,11 +103,17 @@ body.locked #homebar{pointer-events:none}
 .hot:active{background:rgba(0,0,0,.09)}
 .pad{height:30px}
 
+/* ===== 힌트 버튼 ===== */
+#hintbtn{position:absolute;right:16px;bottom:44px;z-index:53;display:none;padding:11px 20px;border-radius:22px;
+  background:#fee500;color:#222;font-size:15px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+#hintbtn.on{display:block;animation:tup .3s ease}
+#hintbtn:active{transform:scale(.94)}
+
 /* ===== 카카오톡 공통 ===== */
 .k-head{flex:none;height:calc(var(--sb) + 54px);padding:var(--sb) 18px 0 58px;display:flex;align-items:center;justify-content:space-between}
 .k-head h1{margin:0;font-size:24px;font-weight:700}
 .k-icons{display:flex;gap:16px}
-#kList.active,#chat.active,#bHome.active{display:flex;flex-direction:column}
+#kList.active,#chat.active{display:flex;flex-direction:column}
 .k-chips{flex:none;display:flex;gap:8px;padding:6px 16px 12px}
 .k-chips span{padding:9px 16px;border-radius:20px;background:#f1f2f4;font-size:14px;font-weight:600;color:#555}
 .k-chips span.on{background:#111;color:#fff}
@@ -126,6 +138,20 @@ body.locked #homebar{pointer-events:none}
 .c-head .k-icons{margin-left:auto;gap:18px;position:relative}
 .c-body{flex:1;overflow-y:auto;padding:6px 12px 10px;scrollbar-width:none;scroll-behavior:smooth}
 .c-body::-webkit-scrollbar{display:none}
+
+/* ===== 국민건강지식센터 화면: 버튼식 답변 ===== */
+#trust{position:absolute;left:12px;right:12px;bottom:40px;z-index:52;pointer-events:none}
+#trust .tbox{pointer-events:auto;background:rgba(26,28,40,.93);border-radius:20px;padding:12px 12px 14px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,.35);animation:tup .3s ease}
+#trust .tlbl{font-size:12px;color:#ffe97a;margin:0 4px 2px;letter-spacing:.3px}
+#trust .tchoice{display:block;width:100%;text-align:left;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;
+  border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.4;margin-top:8px}
+#trust .tchoice::before{content:"▶";color:#fee500;font-size:11px;margin-right:8px}
+#trust .tchoice:active{background:#fee500;color:#222;border-color:#fee500}
+#trust .tme{display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;animation:tup .3s ease}
+#trust .tme .b{background:#fee500;color:#111;padding:10px 14px;border-radius:16px;border-top-right-radius:4px;font-size:15px;line-height:1.42;
+  box-shadow:0 3px 14px rgba(0,0,0,.28);max-width:86%}
+@keyframes tup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 .date{margin:10px auto 8px;font-size:12px;color:#fff;background:rgba(0,0,0,.2);padding:4px 12px;border-radius:12px;width:max-content}
 .row{display:flex;margin-top:5px;align-items:flex-start;animation:pop .28s ease}
 .row.first{margin-top:12px}
@@ -150,11 +176,6 @@ body.locked #homebar{pointer-events:none}
 .typing i{width:7px;height:7px;border-radius:50%;background:#9aa3ad;animation:dot 1s infinite}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
 @keyframes dot{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
-.card{margin:16px auto 6px;width:92%;background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.12);animation:pop .4s}
-.card h4{margin:0 0 10px;font-size:16px}
-.card ul{margin:0;padding:0;list-style:none}
-.card li{padding:7px 0;font-size:14.5px;border-top:1px solid #f0f0f0}
-.card li::before{content:"✔";color:#1db954;margin-right:8px;font-weight:700}
 #composer{flex:none;padding:8px 10px 32px;min-height:96px}
 .fake{height:48px;border-radius:24px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 10px;color:#a6adb5;font-size:15px}
 .fake .pl{width:32px;height:32px;border-radius:50%;background:#f2f3f5;display:grid;place-items:center;font-size:22px;color:#333}
@@ -166,13 +187,6 @@ body.locked #homebar{pointer-events:none}
   border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.4;margin-top:8px}
 .choice::before{content:"▶";color:#fee500;font-size:11px;margin-right:8px}
 .choice:active{background:#fee500;color:#222;border-color:#fee500}
-
-/* ===== 네이버 블로그 홈 ===== */
-.b-head{flex:none;height:calc(var(--sb) + 54px);padding:var(--sb) 18px 0 58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee}
-.b-head h1{margin:0;font-size:20px;font-weight:800;color:#03c75a}
-.b-tabs{display:flex;gap:18px;padding:14px 18px;font-weight:700;font-size:16px;color:#aaa}
-.b-tabs .on{color:#111;border-bottom:2px solid #111;padding-bottom:6px}
-.b-empty{flex:1;display:grid;place-items:center;text-align:center;color:#9aa0a6;font-size:15px;line-height:1.7;padding:0 40px 120px}
 
 /* ===== 구글 검색창 ===== */
 #gSearch{background:#fff}
@@ -252,15 +266,6 @@ body.locked #homebar{pointer-events:none}
         <div id="composer"></div>
       </section>
 
-      <!-- 네이버 블로그 홈 -->
-      <section class="page" id="bHome" data-sb="dark">
-        <div class="b-head"><h1>블로그</h1>
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#222" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7.500"/><path d="m17 17 6 6"/></svg>
-        </div>
-        <div class="b-tabs"><span class="on">이웃새글</span><span>추천</span><span>인기</span></div>
-        <div class="b-empty">새로 올라온 이웃 글이 없어요.<br>대화방에서 받은 링크를 눌러 보세요.</div>
-      </section>
-
       <!-- 구글: 검색창(최근 검색 기록) -->
       <section class="page" id="gSearch" data-sb="dark">
         <div class="gs-head">
@@ -287,13 +292,14 @@ body.locked #homebar{pointer-events:none}
     <button id="backbtn" aria-label="뒤로가기">
       <svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#222" stroke-width="2.700" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+    <button id="hintbtn">힌트?</button>
     <div id="homebar" title="홈"><i></i></div>
 
     <div id="notif">
       <div class="ni" id="notifIcon"></div>
       <div class="nt">
         <div class="nh"><span style="color:#111;font-weight:700;font-size:15px">아빠</span><span>지금</span></div>
-        <div class="nm2">딸, 이거 봤어? 전자레인지가 위험하대.</div>
+        <div class="nm2">딸, 이거 봤어? 전자레인지가 영양소를 파괴한다더라. 되도록이면 쓰지 마.</div>
       </div>
     </div>
 
@@ -315,17 +321,25 @@ body.locked #homebar{pointer-events:none}
 /* =====================================================================
    설정 영역 (수업에 맞게 여기만 고치면 됩니다)
    ===================================================================== */
-const IMG_DIR = '';                // 사진 폴더
+const IMG_DIR = 'images/';                // 사진 폴더
 const RATIO   = {8:[1548,1920],10:[1073,1920]};   // 사진 파일이 없을 때 보여줄 자리표시 비율
-const SHOW_SUMMARY = true;                // 대화 끝에 '가짜뉴스 판별 체크리스트' 카드 표시
+const HINT_DELAY = 5000;                  // 화면에 들어간 뒤 '힌트?' 버튼이 뜨기까지 걸리는 시간(ms)
 
 /* 이미지 화면: 차례대로 이어 붙여 스크롤됩니다.
    ct / cb = 사진 위/아래에서 잘라낼 비율(0~1). 사진에 찍혀 있는 상태바·하단 툴바를 가리는 용도.
-   hot = 터치 영역(사진 전체 기준 비율) → go 로 이동 */
+   hot  = 터치 영역(사진 전체 기준 비율) → go 로 이동
+   hint = '힌트?'를 눌렀을 때 원래 사진 대신 보여줄 사진들 (없으면 힌트 버튼도 없음) */
 const SHOTS = {
-  bPost:{ bg:'#fff', items:[ {n:5, ct:.068, cb:.115}, {n:6, ct:.150, cb:0} ] },
+  bPost:{ bg:'#fff',
+    items:[ {n:5,  ct:.068, cb:.115}, {n:6,  ct:.150, cb:0} ],
+    hint: [ {n:18, ct:.068, cb:.115}, {n:19, ct:.150, cb:0} ] },
   gHome:{ bg:'#fff', items:[ {n:9, ct:.068, cb:0, hot:[{x:.042,y:.221,w:.916,h:.083,go:'gSearch'}]} ] },
-  gNews:{ bg:'#fff', items:[ {n:10, ct:0, cb:0} ] },
+  gNews:{ bg:'#fff',
+    items:[ {n:10, ct:0, cb:0} ],
+    hint: [ {n:20, ct:0, cb:0} ] },
+  gNews2:{ bg:'#fff',
+    items:[ {n:16, ct:0, cb:0}, {n:17, ct:0, cb:0} ],
+    hint: [ {n:21, ct:0, cb:0}, {n:22, ct:0, cb:0} ] },
   gSnu :{ bg:'#fff', items:[ {n:11, ct:.068, cb:0, hot:[{x:.042,y:.467,w:.916,h:.056,go:'gAi'}]} ] },
   gAi  :{ bg:'#fff', items:[ {n:12, ct:.068, cb:0, hot:[{x:.328,y:.417,w:.289,h:.031,go:'gSite'}]} ] },
   gSite:{ bg:'#fff', padBg:'#333', items:[ {n:13, ct:.068, cb:.112}, {n:14, ct:.0875, cb:0}, {n:15, ct:.457, cb:0} ] }
@@ -334,45 +348,27 @@ const SHOTS = {
 /* 구글 최근 검색 기록 (go: 이동할 화면, null 이면 안내 문구만 표시) */
 const RECENT = [
   {text:'전자레인지 영양소 파괴',            go:'gNews'},
-  {text:'전자레인지 진짜 위험한가요?',        go:null},
-  {text:'서울대학교 의과대학 국민건강지식센터', go:'gSnu'},
-  {text:'헬스닷컴',                          go:null}
+  {text:'전자레인지 진짜 위험한가요?',        go:'gNews2'},
+  {text:'서울대학교 의과대학 국민건강지식센터', go:'gSnu'}
 ];
 
-/* 아빠가 보내는 메시지 */
+/* 아빠가 보내는 메시지 (위에서부터 차례대로 도착) */
 const INTRO = [
-  {from:'dad', type:'text',  text:'딸, 이거 봤어? 전자레인지가 위험하대.'},
+  {from:'dad', type:'text',  text:'딸, 이거 봤어? 전자레인지가 영양소를 파괴한다더라. 되도록이면 쓰지 마.'},
   {from:'dad', type:'link',  text:'https://m.blog.naver.com/happymom/224479814068', go:'bPost'},
-  {from:'dad', type:'image', n:8}
+  {from:'dad', type:'image', n:8},
+  {from:'dad', type:'text',  text:'유튜브에도 나오더라.'}
 ];
 
-/* 버튼식 자동 답장 대화 (미연시 선택지)
-   choices(flags) → [{text:'내가 보낼 말', replies:['아빠의 답장',...], next:'다음노드'}]
-   flags.researched 는 '국민건강지식센터 사이트(13~15번)'를 방문하면 true */
+/* 내가 보내는 말 (버튼식).
+   replies 는 아빠의 답장 목록입니다. 지금은 비어 있어서 답장이 오지 않습니다.
+   답장을 추가하려면 replies:['아빠 대사1','아빠 대사2'] 처럼 적으세요. */
 const NODES = {
   n1:{ choices:()=>[
-    {text:'그래요? 봐볼게요.', replies:['응, 한번 봐봐~','아빠 친구가 단톡방에 올린 걸 보고 놀라서 보냈어 😮'], next:'n2'}
-  ]},
-  n2:{ choices:()=>[
-    {text:'헉, 그럼 전자레인지 쓰면 안 되는 거예요?', replies:['그러게… 아빠도 걱정돼서 당분간 안 쓰려고 했어.','근데 우리 딸 생각은 어때?'], next:'n3'},
-    {text:'아빠, 이거 진짜인지 먼저 찾아볼게요.',    replies:['오~ 우리 딸 똑똑하네. 찾아보고 알려줘!'], next:'n3'}
-  ]},
-  n3:{ choices:(f)=> f.researched ? [
-    {text:'찾아보니까 전자레인지가 영양소를 특별히 파괴하지는 않는대요. 출처는 서울대 국민건강지식센터예요.',
-     replies:['정말? 그럼 아빠가 본 블로그 글은 뭐야?','다시 보니까 출처가 나무위키라고 적혀 있고… 맨 밑에는 쿠팡 링크도 있네? 😳'], next:'n4'}
-  ] : [
-    {text:'아직 확인 중이에요. 출처를 더 찾아보고 올게요.', replies:['그래~ 천천히 해 😊'], next:'n3'}
-  ]},
-  n4:{ choices:()=>[
-    {text:'맞아요. 근거도 불확실하고, 상품을 팔려는 목적일 수도 있어요.',
-     replies:['그렇구나… 아빠가 확인도 안 하고 보냈네. 미안~','앞으로는 출처부터 확인하고 보낼게. 고마워 우리 딸! ❤️'], next:'end'},
-    {text:'괜찮아요, 아빠! 앞으로 같이 확인하는 습관 들여요 😊',
-     replies:['그래그래, 든든하다 우리 딸~','앞으로는 출처부터 확인하고 보낼게. 고마워! ❤️'], next:'end'}
+    {text:'그래요? 봐볼게요.', replies:[], next:'end'}
   ]},
   end:{ choices:()=>[] }
 };
-
-const SUMMARY = ['출처는 어디일까?','게시자는 누구일까?','근거가 있을까?','과장된 표현은 없을까?','상업적 목적은 아닐까?','다른 자료와 비교해 봤을까?'];
 
 /* =====================================================================
    유틸
@@ -423,7 +419,7 @@ const scr=$('#screen'), pagesEl=$('#pages'), backbtn=$('#backbtn');
 let stack=['home'];
 let S, tNotif, tHide, AC;
 function freshState(){ return {token:(S?S.token:0)+1, unlocked:false, notified:false, chatOpened:false, started:false, node:null, busy:false,
-  flags:{researched:false}, lastFrom:null, lastPreview:'', lastTime:''}; }
+  flags:{}, lastFrom:null, lastPreview:'', lastTime:''}; }
 S=freshState();
 
 function render(){
@@ -434,9 +430,10 @@ function render(){
   if(document.body.classList.contains('locked')) scr.dataset.sb='light';
   backbtn.style.display = cur==='home' ? 'none' : 'grid';
   layoutPage(pg);
+  hintUpdate(cur);
   (ENTER[cur]||(()=>{}))();
 }
-function resetScroll(id){ const s=document.querySelector('#'+id+' .scroll'); if(s) s.scrollTop=0; }
+function resetScroll(id){ document.querySelectorAll('#'+id+' .scroll').forEach(s=>{s.scrollTop=0;}); }
 function go(id){ if(stack[stack.length-1]===id) return; stack.push(id); resetScroll(id); render(); }
 function openApp(id){ stack=['home',id]; resetScroll(id); render(); }
 function goHome(){ closeLightbox(); stack=['home']; render(); }
@@ -449,11 +446,35 @@ const ENTER = {
     if(!S.chatOpened){S.chatOpened=true; updateBadges(); renderKList();}
     if(!S.started){S.started=true; playIntro();}
     else {scrollChat(); renderChoices();}
-  },
-  gSite(){ S.flags.researched=true; }
+  }
 };
 
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),1800); }
+
+/* =====================================================================
+   힌트 버튼: 화면에 들어가고 5초 뒤 '힌트?' → 누르면 힌트 사진으로 교체
+   ===================================================================== */
+let hintTimer;
+function hintUpdate(cur){
+  clearTimeout(hintTimer);
+  const btn=$('#hintbtn'); btn.classList.remove('on'); btn.textContent='힌트?';
+  document.querySelectorAll('.shotpage.hinton').forEach(p=>p.classList.remove('hinton'));   // 다시 들어오면 원래 사진부터
+  const cfg=SHOTS[cur];
+  if(!cfg||!cfg.hint) return;
+  hintTimer=setTimeout(()=>{ if(stack[stack.length-1]===cur) btn.classList.add('on'); },HINT_DELAY);
+}
+$('#hintbtn').onclick=()=>{
+  const cur=stack[stack.length-1], pg=$('#'+cur);
+  if(!pg||!SHOTS[cur]||!SHOTS[cur].hint) return;
+  const turningOn=!pg.classList.contains('hinton');
+  const from=pg.querySelector(turningOn?'.scroll:not(.alt)':'.scroll.alt');
+  const top=from?from.scrollTop:0;                         // 보던 위치를 그대로 유지
+  pg.classList.toggle('hinton',turningOn);
+  $('#hintbtn').textContent=turningOn?'원래대로':'힌트?';
+  layoutPage(pg);
+  const to=pg.querySelector(turningOn?'.scroll.alt':'.scroll:not(.alt)');
+  if(to) to.scrollTop=top;
+};
 
 /* =====================================================================
    홈 화면
@@ -461,12 +482,10 @@ function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on
 function buildHome(){
   const real=[
     {name:'카카오톡', img:1, open:()=>openApp('kList'), badge:true},
-    {name:'네이버 블로그', img:4, open:()=>openApp('bHome')},
+    {name:'네이버 블로그', img:4, open:()=>openApp('bPost')},   // 블로그 앱 → 5,6번 글 바로 열림
     {name:'Google', img:7, open:()=>openApp('gHome')}
   ];
-  const dummy=[['캘린더','📅','#fff'],['사진','🌼','#fff'],['카메라','📷','#9a9a9f'],['시계','🕒','#111'],['날씨','⛅','linear-gradient(#3a8df0,#8cc6ff)'],
-    ['지도','🗺️','linear-gradient(#7dd87f,#4aa3f2)'],['메모','📝','#ffd60a'],['설정','⚙️','#8e8e93'],['App Store','🅰️','linear-gradient(#1c9bff,#0a5cf0)'],
-    ['계산기','🧮','#ff9f0a'],['지갑','👛','#111'],['주식','📈','#111'],['건강','❤️','#fff']];
+  const dummy=[['캘린더','📅','#fff'],['사진','🌼','#fff'],['카메라','📷','#9a9a9f'],['시계','🕒','#111'],['날씨','⛅','linear-gradient(#3a8df0,#8cc6ff)']];
   const dockApps=[['전화','📞','#34c759'],['Safari','🧭','linear-gradient(#fff,#cfe6ff)'],['메시지','💬','#34c759'],['음악','🎵','linear-gradient(#ff5e7e,#fa233b)']];
   const grid=$('#grid');
   real.forEach(a=>{
@@ -549,10 +568,6 @@ function addTyping(){
   const col=el('div','col'); col.appendChild(el('div','bubble','<i></i><i></i><i></i>')); row.appendChild(col);
   cbody.appendChild(row); scrollChat(); return row;
 }
-function addSummary(){
-  const c=el('div','card','<h4>🔍 가짜뉴스, 이렇게 가려내요</h4><ul>'+SUMMARY.map(s=>`<li>${s}</li>`).join('')+'</ul>');
-  cbody.appendChild(c); scrollChat();
-}
 async function playIntro(){
   const tok=S.token; S.busy=true; renderChoices();
   addDate();
@@ -567,7 +582,7 @@ function renderChoices(){
   const comp=$('#composer'); comp.innerHTML='';
   const node=NODES[S.node]; const list=(node&&!S.busy)?node.choices(S.flags):[];
   if(!list.length){
-    comp.innerHTML=`<div class="fake"><span class="pl">+</span><span style="flex:1">${S.node==='end'?'대화가 끝났어요':'메시지 입력'}</span><span class="pl">☺</span></div>`;
+    comp.innerHTML=`<div class="fake"><span class="pl">+</span><span style="flex:1">메시지 입력</span><span class="pl">☺</span></div>`;
     return;
   }
   const vn=el('div','vn','<div class="lbl">💬 답장을 골라 보세요</div>');
@@ -584,30 +599,34 @@ async function pick(c){
     await sleep(350); if(tok!==S.token) return;
   }
   S.node=c.next; S.busy=false;
-  if(c.next==='end' && SHOW_SUMMARY){ await sleep(500); if(tok!==S.token) return; addSummary(); }
   renderChoices();
 }
 
 /* =====================================================================
    이미지(스크린샷) 화면 생성
    ===================================================================== */
+function buildScroll(cfg,items,alt){
+  const sc=el('div','scroll'+(alt?' alt':''));
+  items.forEach(it=>{
+    const box=el('div','crop'); box.dataset.ct=it.ct; box.dataset.cb=it.cb;
+    const inner=el('div','inner'); const img=new Image(); img.draggable=false; img.alt='';
+    img.addEventListener('load',()=>layoutCrop(box));
+    inner.appendChild(img);
+    (it.hot||[]).forEach(h=>{
+      const a=el('div','hot'); a.style.cssText=`left:${h.x*100}%;top:${h.y*100}%;width:${h.w*100}%;height:${h.h*100}%`;
+      a.onclick=()=>go(h.go); inner.appendChild(a);
+    });
+    box.appendChild(inner); sc.appendChild(box); loadImg(img,it.n);
+  });
+  const pad=el('div','pad'); pad.style.background=cfg.padBg||cfg.bg; sc.appendChild(pad);
+  return sc;
+}
 function buildShots(){
   for(const [id,cfg] of Object.entries(SHOTS)){
     const sec=el('section','page shotpage'); sec.id=id; sec.dataset.sb='dark'; sec.style.background=cfg.bg;
-    const sc=el('div','scroll');
-    cfg.items.forEach(it=>{
-      const box=el('div','crop'); box.dataset.ct=it.ct; box.dataset.cb=it.cb;
-      const inner=el('div','inner'); const img=new Image(); img.draggable=false; img.alt='';
-      img.addEventListener('load',()=>layoutCrop(box));
-      inner.appendChild(img);
-      (it.hot||[]).forEach(h=>{
-        const a=el('div','hot'); a.style.cssText=`left:${h.x*100}%;top:${h.y*100}%;width:${h.w*100}%;height:${h.h*100}%`;
-        a.onclick=()=>go(h.go); inner.appendChild(a);
-      });
-      box.appendChild(inner); sc.appendChild(box); loadImg(img,it.n);
-    });
-    const pad=el('div','pad'); pad.style.background=cfg.padBg||cfg.bg; sc.appendChild(pad);
-    sec.appendChild(sc); pagesEl.appendChild(sec);
+    sec.appendChild(buildScroll(cfg,cfg.items,false));
+    if(cfg.hint) sec.appendChild(buildScroll(cfg,cfg.hint,true));     // 힌트 사진(평소엔 숨김)
+    pagesEl.appendChild(sec);
   }
 }
 
@@ -650,7 +669,7 @@ function unlock(){
   tNotif=setTimeout(showNotif,3000);                 // 잠금 해제 3초 뒤 알림
 }
 function showNotif(){
-  const tok=S.token; S.notified=true; S.lastPreview=INTRO[0].text; S.lastTime=hhmm();
+  S.notified=true; S.lastPreview=INTRO[0].text; S.lastTime=hhmm();
   updateBadges(); renderKList();
   $('#notif').classList.add('show'); chime();
   tHide=setTimeout(hideNotif,7000);
@@ -667,7 +686,7 @@ $('#lightbox').onclick=closeLightbox;
 /* 처음부터 다시 */
 function resetAll(){
   clearTimeout(tNotif); clearTimeout(tHide); hideNotif(); closeLightbox();
-  S=freshState(); stack=['home'];
+  S=freshState(); stack=['home']; trustReset();
   cbody.innerHTML=''; $('#composer').innerHTML=''; renderKList(); updateBadges();
   $('#lock').classList.remove('gone'); document.body.classList.add('locked');
   tickClock(); render();
@@ -675,6 +694,36 @@ function resetAll(){
 $('#resetBtn').onclick=resetAll;
 /* 모바일용: 상단 시간을 빠르게 3번 터치해도 처음부터 다시 */
 (function(){ let n=0,t; $('#sbtime').addEventListener('click',()=>{ n++; clearTimeout(t); t=setTimeout(()=>n=0,700); if(n>=3){n=0;resetAll();} }); })();
+
+/* =====================================================================
+   국민건강지식센터(13·14·15번) 화면에 들어가면 버튼식 답변이 뜬다
+   ===================================================================== */
+const TRUST_TEXT='실제로 있는, 믿을만한 센터구나.';
+let trustPicked=false, trustOn=false, trustTimer;
+const trustEl=el('div'); trustEl.id='trust'; $('#screen').appendChild(trustEl);
+function trustShowChoice(){
+  trustEl.innerHTML='';
+  const box=el('div','tbox','<div class="tlbl">💬 답장을 골라 보세요</div>');
+  const b=el('button','tchoice'); b.textContent=TRUST_TEXT;
+  b.onclick=()=>{ trustPicked=true; trustShowBubble(); };
+  box.appendChild(b); trustEl.appendChild(box);
+}
+function trustShowBubble(){
+  trustEl.innerHTML='';
+  const row=el('div','tme'); const bb=el('div','b'); bb.textContent=TRUST_TEXT;
+  row.appendChild(el('span','', '')); row.appendChild(bb); trustEl.appendChild(row);
+}
+function trustRender(){
+  clearTimeout(trustTimer);
+  if(!trustOn){ trustEl.innerHTML=''; return; }
+  if(trustPicked){ trustShowBubble(); return; }
+  trustTimer=setTimeout(()=>{ if(trustOn) trustShowChoice(); },1200);   // 화면이 뜨고 1.2초 뒤 선택지 등장
+}
+function trustReset(){ clearTimeout(trustTimer); trustPicked=false; trustOn=false; trustEl.innerHTML=''; }
+new MutationObserver(()=>{
+  const on=$('#gSite').classList.contains('active');
+  if(on===trustOn) return; trustOn=on; trustRender();
+}).observe($('#pages'),{attributes:true,attributeFilter:['class'],subtree:true});
 
 /* =====================================================================
    화면 맞춤
@@ -694,6 +743,7 @@ addEventListener('resize',fit);
    ===================================================================== */
 buildHome(); buildKTabs(); buildShots(); buildGSearch();
 $('#notifIcon').appendChild(iconImg(1));
+document.querySelector('#notif .nm2').textContent=INTRO[0].text;      // 알림 문구는 INTRO 첫 대사와 항상 같게
 renderKList(); tickClock(); setInterval(tickClock,1000);
 fit(); render();
 </script>
